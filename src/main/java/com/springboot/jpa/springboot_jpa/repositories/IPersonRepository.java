@@ -6,16 +6,15 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface PersonRepository extends CrudRepository<Person, Long> {
+public interface IPersonRepository extends CrudRepository<Person, Long> {
 
+    //MÉTODOS FACILITADOS POR JPA
     List<Person> findByProgrammingLanguage(String programmingLanguage);
 
     List<Person> findByProgrammingLanguageAndName(String programmingLanguage, String name);
 
 
-
-
-
+    //MÉTEDOS CREADOS POR UNO MISMO
     @Query("select persons from Person persons")
     List<Person> buscarAllPersons();
 
@@ -24,6 +23,14 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
 
     @Query("select persons from Person persons where persons.programmingLanguage=?1 and persons.name=?2")
     List<Person> buscarPorLenguajeProgramacionYNombre(String programmingLanguage, String name);
+
+
+    //CARGA DE ARGUMENTOS
+    @Query("select person.name, person.programmingLanguage from Person person")
+    List<Object[]> obtenerValoresPersona();
+
+    @Query("select person.name, person.programmingLanguage from Person person where person.programmingLanguage=?1")
+    List<Object[]> obtenerValoresPersona(String programmingLanguage);
 
 
 }
