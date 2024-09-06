@@ -24,7 +24,40 @@ public class SpringBootJpaApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		this.update();
+		this.personalizeQuery();
+	}
+
+	@Transactional(readOnly = true)
+	public void personalizeQuery() {
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Ingrese el id de la persona que quieres ver el nombre");
+		Long id = scanner.nextLong();
+		//String name = repository.getNameById(id);
+		//Long idPerson = repository.getIdById(id);
+		//String fullName = repository.getFullNameById(id);
+		Object[] person = (Object[]) repository.getDataPersonById(id);
+
+		System.out.println(person[0] + " " + person[1] + " " + person[2]);
+	}
+
+	@Transactional
+	public void delete(){
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Ingrese el id de la persona que quieres eliminar");
+		Long id = scanner.nextLong();
+
+		repository.deleteById(id);
+	}
+
+	@Transactional
+	public void delete2(){
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Ingrese el id de la persona que quieres eliminar");
+		Long id = scanner.nextLong();
+
+		Optional<Person> person = repository.findById(id);
+		person.ifPresentOrElse(person1 -> repository.delete(person1),
+				() -> System.out.println("La persona no existe"));
 	}
 
 	@Transactional

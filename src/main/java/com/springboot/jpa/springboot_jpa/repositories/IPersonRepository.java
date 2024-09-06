@@ -19,7 +19,9 @@ public interface IPersonRepository extends CrudRepository<Person, Long> {
 
     Optional<Person> findByNameContaining(String name); //Busca el nombre con alguna coincidencia
 
-    //Implementación de mis propios metodos
+
+
+    //Implementación de mis propios metodos con Optional
     @Query("select person from Person person where person.id=?1")
     Optional<Person> findOne(Long id);
 
@@ -28,6 +30,23 @@ public interface IPersonRepository extends CrudRepository<Person, Long> {
 
     @Query("select person from Person person where person.name like %?1%")
     Optional<Person> findOneLikeName(String name);
+
+
+
+
+    // Querys personalizadas devolviendo el tipo que queramos siempre que coincida en la base de datos
+    @Query("select person.name from Person person where person.id = ?1")
+    String getNameById(Long Id);
+
+    @Query("select person.id from Person person where person.id = ?1")
+    Long getIdById(Long Id);
+
+    @Query("select concat(person.name,' ',person.surname) as fullname from Person person where person.id = ?1")
+    String getFullNameById(Long Id);
+
+    @Query("select person.name, person.surname, person.programmingLanguage from Person person where person.id = ?1")
+    Object getDataPersonById(Long Id);
+
 
 
 
@@ -40,6 +59,8 @@ public interface IPersonRepository extends CrudRepository<Person, Long> {
 
     @Query("select persons from Person persons where persons.programmingLanguage=?1 and persons.name=?2")
     List<Person> buscarPorLenguajeProgramacionYNombre(String programmingLanguage, String name);
+
+
 
 
     //CARGA DE ARGUMENTOS
