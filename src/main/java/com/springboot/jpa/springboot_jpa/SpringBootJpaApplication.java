@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
 
 @SpringBootApplication
 public class SpringBootJpaApplication implements CommandLineRunner {
@@ -22,11 +24,55 @@ public class SpringBootJpaApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		this.findOne();
+		this.update();
 	}
 
-	//Formas de trabajar con un Optional<>
+	@Transactional
+	public void update(){
+
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Ingrese el id de la persona que quieres buscar");
+		Long id = scanner.nextLong();
+
+		Optional<Person> person = repository.findById(id);
+//		person.ifPresent(person1 -> {
+//			System.out.println(person1);
+//			System.out.println("Ingrese el lenguaje de programación de " + person1.getName());
+//			String newProgrammingLanguage = scanner.next();
+//			person1.setProgrammingLanguage(newProgrammingLanguage);
+//			repository.save(person1);
+//			System.out.println("Persona modificada " + person1);
+//		});
+
+		if (person.isPresent()){
+			System.out.println(person);
+			System.out.println("Ingrese el lenguaje de programación de " + person.get().getName());
+			String newProgrammingLanguage = scanner.next();
+			person.get().setProgrammingLanguage(newProgrammingLanguage);
+			repository.save(person.get());
+			System.out.println("Persona modificada " + person);
+		}else {
+			System.out.println("La persona no existe");
+		}
+
+	}
+
+	@Transactional
+	public void create(){
+
+		Person person = new Person(null, "Francisco", "Hontoria", "Java");
+		repository.save(person);
+
+		System.out.println(person.toString());
+
+		repository.findByName("Francisco").ifPresent(System.out::println);
+
+	}
+
+	@Transactional(readOnly = true)
 	public void findOne(){
+		//Formas de trabajar con un Optional<>
+
 		//1º
 		//orElseThrow en este caso, si no existe una persona, devuelve una exception
 		//Person person = repository.findById(1L).orElseThrow();
@@ -43,7 +89,11 @@ public class SpringBootJpaApplication implements CommandLineRunner {
 		//3º
 		//repository.findById(1L).ifPresent(person -> System.out.println(person));
 
-		//4º Probando metodos
+
+
+
+
+		// Probando metodos
 		//repository.findOneName("Francisco").ifPresent(System.out::println);
 		//repository.findOneLikeName("Franc").ifPresent(System.out::println);
 		//repository.findByName("Francisco").ifPresent(System.out::println);
