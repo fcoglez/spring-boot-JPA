@@ -1,5 +1,6 @@
 package com.springboot.jpa.springboot_jpa.repositories;
 
+import com.springboot.jpa.springboot_jpa.dto.PersonDto;
 import com.springboot.jpa.springboot_jpa.entities.Person;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -59,6 +60,20 @@ public interface IPersonRepository extends CrudRepository<Person, Long> {
 
     @Query("select persons from Person persons where persons.programmingLanguage=?1 and persons.name=?2")
     List<Person> buscarPorLenguajeProgramacionYNombre(String programmingLanguage, String name);
+
+
+    // Consultas mixtas
+    @Query("select person, person.programmingLanguage from Person person")
+    List<Object[]> findAllMixPerson();
+
+    @Query("select new Person(person.name, person.surname) from Person person") //En esta consulta, vamos a devolver el nombre y apellido de las personas gracias a que tenemos un constructor con los 2 parametros.
+    List<Person> findAllClassPerson();
+
+    @Query("select new com.springboot.jpa.springboot_jpa.dto.PersonDto(person.name, person.surname) from Person person")
+    List<PersonDto> findAllPersonDto();
+
+
+
 
 
 

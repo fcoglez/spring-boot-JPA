@@ -1,5 +1,6 @@
 package com.springboot.jpa.springboot_jpa;
 
+import com.springboot.jpa.springboot_jpa.dto.PersonDto;
 import com.springboot.jpa.springboot_jpa.entities.Person;
 import com.springboot.jpa.springboot_jpa.repositories.IPersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,10 @@ public class SpringBootJpaApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		this.personalizeQuery();
+		this.personalizeQuery2();
 	}
+
+
 
 	@Transactional(readOnly = true)
 	public void personalizeQuery() {
@@ -39,6 +42,23 @@ public class SpringBootJpaApplication implements CommandLineRunner {
 
 		System.out.println(person[0] + " " + person[1] + " " + person[2]);
 	}
+
+
+
+	@Transactional(readOnly = true)
+	public void personalizeQuery2() {
+		System.out.println("Consulta personalizada por objeto persona y lenguaje de programación");
+
+		//List<Object[]> personsData = repository.findAllMixPerson();
+		//List<Person> persons = repository.findAllClassPerson();
+		List<PersonDto> personsDto = repository.findAllPersonDto();
+
+		personsDto.forEach(System.out::println);
+
+	}
+
+
+
 
 	@Transactional
 	public void delete(){
