@@ -9,6 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -25,11 +26,74 @@ public class SpringBootJpaApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		this.personalizeQueryBetween();
+		this.whereIn();
+	}
+
+
+
+	@Transactional(readOnly = true)
+	public void whereIn() {
+		System.out.println("Consultas where in");
+		List<Person> persons = repository.getPersonsByIds(Arrays.asList(2L, 4L, 6L));
+
+		persons.forEach(System.out::println);
+
+	}
+
+
+
+	@Transactional(readOnly = true)
+	public void subQueries() {
+
+		System.out.println("Consultas anidadas");
+//
+//		List<Object[]> registers = repository.getShorterName();
+//		registers.forEach(person -> System.out.println("nombre " + person[0] + " , longitud minima del nombre " + person[1]));
+
+		Optional<Person> optionalPerson = repository.getLastPersonRegistration();
+		optionalPerson.ifPresent(System.out::println);
+
+	}
+
+
+	@Transactional(readOnly = true)
+	public void personalizeQueryLength() {
+		System.out.println("Consultas con length()");
+
+		List<Object[]> lengthName = repository.getPersonNameLength();
+		lengthName.forEach(person -> System.out.println("nombre " + person[0] + " , longitud minima del nombre " + person[1]));
+
+		Integer lengthPersonName = repository.getMinLengthName();
+		System.out.println("El nombre mas corto tiene " + lengthPersonName + " caracteres");
+
+		System.out.println("Lo siguiente es un resumen de consulta con todas las funciones");
+		Object[] resumeAllFunctions = (Object[]) repository.getResumeAllFunctions();
+		System.out.println("El id minimo es el " + resumeAllFunctions[0] +
+						   ", El id maximo es " + resumeAllFunctions[1] +
+						   ", La suma de todos los id es "  + resumeAllFunctions[2] +
+				           ", La media " + resumeAllFunctions[3] +
+				           ", count id " + resumeAllFunctions[4]);
+
+
+	}
+
+
+
+	@Transactional(readOnly = true)
+	public void personalizeQueryCount() {
+		System.out.println("Consultas con count()");
+
+		Long totalPerson = repository.totalPerson();
+		Long minId = repository.minId();
+		Long maxId = repository.maxId();
+
+		System.out.println("El total de personas en base de datos es de " + totalPerson + " personas");
+		System.out.println("El id minimo es " + minId);
+		System.out.println("El id maximo es " + maxId);
 	}
 
 	@Transactional(readOnly = true)
-	public void personalizeQueryBetween() {
+	public void personalizeQueryBetweenAndOrderBy() {
 		System.out.println("Consultas entre parametros usando between");
 
 		//List<Person> betweenId = repository.findAllBetweenId();
@@ -38,9 +102,12 @@ public class SpringBootJpaApplication implements CommandLineRunner {
 		List<Person> betweenName = repository.findByNameBetween("E", "G");
 		List<Person> betweenNameOrderBy = repository.findAllBetweenNameAndOderBy();
 		List<Person> betweenIdOrderBy = repository.findByIdBetweenOrderByNameDescSurnameAsc(2L, 5L);
+		List<Person> orderById = repository.findAllByOrderByIdDesc();
+		List<Person> orderByName = repository.findAllByOrderByNameDesc();
+		List<Person> orderByNameSurname = repository.findAllByOrderByNameAscSurnameDesc();
 
 
-		betweenIdOrderBy.forEach(System.out::println);
+		orderByNameSurname.forEach(System.out::println);
 	}
 
 

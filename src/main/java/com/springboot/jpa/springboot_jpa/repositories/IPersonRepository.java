@@ -30,6 +30,17 @@ public interface IPersonRepository extends CrudRepository<Person, Long> {
 
     List<Person> findByIdBetweenOrderByNameDescSurnameAsc(Long start, Long end);
 
+    List<Person> findAllByOrderByIdDesc();
+
+    List<Person> findAllByOrderByNameDesc();
+
+    List<Person> findAllByOrderByNameAscSurnameDesc();
+
+
+
+
+
+
 
 
 
@@ -75,6 +86,9 @@ public interface IPersonRepository extends CrudRepository<Person, Long> {
     List<Person> buscarPorLenguajeProgramacionYNombre(String programmingLanguage, String name);
 
 
+
+
+
     // Consultas personalizadas (mixtas)
     @Query("select person, person.programmingLanguage from Person person")
     List<Object[]> findAllMixPerson();
@@ -95,6 +109,9 @@ public interface IPersonRepository extends CrudRepository<Person, Long> {
     List<String> findAllProgrammingLanguageDistinct();
 
 
+
+
+
     //TIPOS PARA CONCATENAR
     //@Query("select concat(person.name,' ',person.surname) from Person person")
     @Query("select person.name || ' ' || person.surname from Person person") // Esta es otra forma de hacer un CONCAT()
@@ -110,6 +127,9 @@ public interface IPersonRepository extends CrudRepository<Person, Long> {
     List<Object[]> findAllPersonDataCase();
 
 
+
+
+
     //USANDO BETWEEN
     @Query("select person from Person person where person.id between 2 and 8")
     List<Person> findAllBetweenId();
@@ -123,6 +143,11 @@ public interface IPersonRepository extends CrudRepository<Person, Long> {
 
 
 
+
+
+
+
+
     //USANDO ODER BY PARA ORDENAR
     //@Query("select person from Person person where person.name >= ?1 and person.name < ?2 order by person.name") //Esto al resultado, lo ordenaria por el nombre alfabeticamente
     //@Query("select person from Person person order by person.name") //Esto al resultado, lo ordenaria por el nombre alfabeticamente
@@ -131,6 +156,57 @@ public interface IPersonRepository extends CrudRepository<Person, Long> {
     @Query("select person from Person person order by person.name asc, person.surname desc")
     List<Person> findAllBetweenNameAndOderBy();
 
+
+
+
+
+
+    //USANDO COUNT, MIN, MAX
+    @Query("select count(person.name) from Person person")
+    Long totalPerson();
+
+    @Query("select min(person.id) from Person person")
+    Long minId();
+
+    @Query("select max(person.id) from Person person")
+    Long maxId();
+
+
+
+
+    //USANDO LENGTH
+    @Query("select person.name, length(person.name) from Person person")
+    List<Object[]> getPersonNameLength();
+
+    @Query("select min(length(person.name)) from Person person")
+    Integer getMinLengthName();
+
+
+
+
+
+    //Resumen con todas las funciones
+    @Query("select min(person.id), max(person.id), sum(person.id), avg(length(person.name)), count(person.id) from Person person")
+    Object getResumeAllFunctions();
+
+
+
+    //CONSULTAS ANIDADAS
+    //La consulta devuelve los nombres y sus longitudes para todas las personas cuyos nombres tienen la longitud mínima en la tabla.
+    @Query("select person.name, length(person.name) from Person person where length(person.name) = (select min(length(person.name)) from Person person)")
+//  @Query("select person.name, length(person.name) from Person person where length(person.name) = (select min(length(p.name)) from Person p)")
+    List<Object[]> getShorterName();
+
+    @Query("select person from Person person where person.id = (select max(p.id) from Person p)")
+    Optional<Person> getLastPersonRegistration();
+
+
+
+    //USANSO EL IN (que contengan) O EL NOT IN ( que no contenga)
+    //@Query("select person from Person person where person.id in (2, 5, 4)") //Devuelve las personas con id 2, 5, 4
+    //@Query("select person from Person person where person.id in ?1") //Devuelve las personas con el id que pasamos por parametros
+    @Query("select person from Person person where person.id not in ?1") //Devuelve las personas que no contiene el id pasado por parametro
+    List<Person> getPersonsByIds(List<Long> ids);
 
 
 
