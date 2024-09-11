@@ -25,9 +25,50 @@ public class SpringBootJpaApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		this.personalizeQuery2();
+		this.personalizeQueryBetween();
 	}
 
+	@Transactional(readOnly = true)
+	public void personalizeQueryBetween() {
+		System.out.println("Consultas entre parametros usando between");
+
+		//List<Person> betweenId = repository.findAllBetweenId();
+		//List<Person> betweenName = repository.findAllBetweenName("E", "G");
+		List<Person> betweenId = repository.findByIdBetween(2L, 5L);
+		List<Person> betweenName = repository.findByNameBetween("E", "G");
+		List<Person> betweenNameOrderBy = repository.findAllBetweenNameAndOderBy();
+		List<Person> betweenIdOrderBy = repository.findByIdBetweenOrderByNameDescSurnameAsc(2L, 5L);
+
+
+		betweenIdOrderBy.forEach(System.out::println);
+	}
+
+
+	@Transactional(readOnly = true)
+	public void personalizeQueryConcatUpperAndLowerCase() {
+		System.out.println("Consultas con los nombres y apellidos de las personas");
+
+		List<String> names = repository.findAllFullNameConcat();
+		List<String> namesUpper = repository.findAllFullNameConcatUpper();
+		List<String> namesLower = repository.findAllFullNameConcatLower();
+		List<Object[]> personCase = repository.findAllPersonDataCase();
+
+		//namesLower.forEach(System.out::println);
+
+		personCase.forEach(person -> System.out.println("id " + person[0] + " , nombre " + person[1] + " , apellido " + person[2] + " , lenguaje de programacion " + person[3]));
+	}
+
+
+	@Transactional(readOnly = true)
+	public void personalizeQueryDistinct() {
+		System.out.println("Consultas con los nombres de las personas");
+
+		//List<String> personsName = repository.findAllNames();
+		//List<String> personsName = repository.findAllNamesDistinct();
+		List<String> personsProgrammingLanguague = repository.findAllProgrammingLanguageDistinct();
+
+		personsProgrammingLanguague.forEach(System.out::println);
+	}
 
 
 	@Transactional(readOnly = true)
@@ -47,14 +88,11 @@ public class SpringBootJpaApplication implements CommandLineRunner {
 
 	@Transactional(readOnly = true)
 	public void personalizeQuery2() {
-		System.out.println("Consulta personalizada por objeto persona y lenguaje de programación");
-
 		//List<Object[]> personsData = repository.findAllMixPerson();
 		//List<Person> persons = repository.findAllClassPerson();
 		List<PersonDto> personsDto = repository.findAllPersonDto();
 
 		personsDto.forEach(System.out::println);
-
 	}
 
 
