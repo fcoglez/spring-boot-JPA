@@ -26,7 +26,7 @@ public class SpringBootJpaApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		this.whereIn();
+		this.update();
 	}
 
 
@@ -217,8 +217,16 @@ public class SpringBootJpaApplication implements CommandLineRunner {
 
 	@Transactional
 	public void create(){
+		Scanner scanner = new Scanner(System.in);
 
-		Person person = new Person(null, "Francisco", "Hontoria", "Java");
+		System.out.println("Introduce nombre");
+		String name = scanner.next();
+		System.out.println("Introduce apellido");
+		String surname = scanner.next();
+		System.out.println("Introduce lenguaje de programacion");
+		String language = scanner.next();
+
+		Person person = new Person(null, name, surname, language);
 		repository.save(person);
 
 		System.out.println(person.toString());

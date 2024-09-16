@@ -2,6 +2,7 @@ package com.springboot.jpa.springboot_jpa.entities;
 
 import jakarta.persistence.*;
 
+
 @Entity
 @Table(name="persons")
 public class Person {
@@ -15,6 +16,13 @@ public class Person {
 
     @Column(name = "programming_language")
     private String programmingLanguage;
+
+    @Embedded
+    private Audit audit = new Audit();
+
+
+
+
 
     public Person() {
     }
@@ -30,6 +38,8 @@ public class Person {
         this.surname = surname;
         this.programmingLanguage = programmingLanguage;
     }
+
+
 
     public Long getId() {
         return id;
@@ -63,6 +73,8 @@ public class Person {
         this.programmingLanguage = programmingLanguage;
     }
 
+
+
     @Override
     public String toString() {
         return "Person{" +
@@ -70,6 +82,8 @@ public class Person {
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", programmingLanguage='" + programmingLanguage + '\'' +
+                ", createAt=" + audit.getCreateAt() +
+                ", updateAt=" + audit.getUpdateAt() +
                 '}';
     }
 }
